@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Guessing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .game-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 80%;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .level-info {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ffce00;
+            animation: fall 3s linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-200px) translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(600px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        .congratulations {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-top: 20px;
+            animation: pop-in 1s ease;
+        }
+
+        @keyframes pop-in {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Password Game</h1>
+        <p id="level-info">Level 1</p>
+        <p id="question">Loading question...</p>
+        <input type="text" id="answer" placeholder="Enter your answer" />
+        <button onclick="submitAnswer()">Submit Answer</button>
+        <div id="feedback" class="feedback"></div>
+        <div id="congratulations" class="congratulations"></div>
+    </div>
+
+    <script>
+        let currentLevel = 1;
+        const questions = [
+            { question: "What is 2 + 2?", answer: "4" }, 
+            { question: "What is the capital of France?", answer: "paris" }, 
+            { question: "Who wrote 'Romeo and Juliet'?", answer: "shakespeare" }, 
+            { question: "What is the chemical symbol for water?", answer: "h2o" }, 
+            { question: "What is the square root of 64?", answer: "8" },
+            { question: "Who is the  Developer of this Game?", answer: "maaz bhavnagri" },
+        ];
+
+        function fetchQuestion() {
+            if (currentLevel <= questions.length) {
+                document.getElementById('question').innerText = questions[currentLevel - 1].question;
+                document.getElementById('level-info').innerText = `Level: ${currentLevel}`;
+            } else {
+                document.getElementById('question').innerText = "Congratulations, you completed all levels!";
+                document.getElementById('level-info').innerText = "You won the game!";
+                showCongratulationEffect();
+            }
+        }
+
+        function submitAnswer() {
+            const answer = document.getElementById('answer').value.toLowerCase();
+            const correctAnswer = questions[currentLevel - 1].answer.toLowerCase();
+            const feedback = document.getElementById('feedback');
+            
+            if (answer === correctAnswer) {
+                feedback.innerText = "Correct answer! You moved to the next level.";
+                feedback.className = 'feedback success';
+                currentLevel++;
+                fetchQuestion();
+            } else {
+                feedback.innerText = "Incorrect answer. Try again!";
+                feedback.className = 'feedback error';
+            }
+            document.getElementById('answer').value = '';
+            document.getElementById('answer').focus();
+        }
+
+        function showCongratulationEffect() {
+            const container = document.querySelector('.game-container');
+            const congratulationText = document.getElementById('congratulations');
+            congratulationText.innerText = "Congratulations! 🎉";
+
+            // Create confetti elements
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.animationDelay = `${Math.random() * 2}s`;
+                container.appendChild(confetti);
+
+                // Remove confetti after animation
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        fetchQuestion();
+    </script>
+</body>
+</html>
